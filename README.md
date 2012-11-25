@@ -121,6 +121,36 @@ user.delete
 User.delete(:age => {NSFGreaterThan => 20})
 ````
 
+## Using relationships (Basic)
+
+````ruby
+class User < NanoStore::Model
+  attribute :name
+  attribute :age
+  attribute :created_at
+  has_many :planes, :class => Plane, :dependant => :destroy
+end
+
+
+class Plane < NanoStore::Model
+  attribute :name
+  attribute :age
+  belongs_to :user, :class => User
+end
+
+u = User.create(:name => "Joe", :age => 42)
+u.planes.all => []
+u.plane.create(:name => "Concorde", :age => 30)
+u.planes.all => [<Plane...>]
+u.planes.where(:age => 30).where(:name => "Concorde").all => [<Plane...>]
+u.planes.count => 1
+Plane.all.count => 1
+u.delete
+Plane.all.count => 0
+
+````
+
+
 ## Using Transaction
 
 Use transaction is easy, just wrap your database code in a transaction block.
