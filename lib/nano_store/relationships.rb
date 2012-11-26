@@ -15,11 +15,19 @@ module NanoStore
     end
 
     def create_or_update(identifiers = {}, attributes = {})
-      @klass.create_or_update(identifiers, attributes)
+      @klass.create_or_update(identifiers, @criteria[:conditions].merge(attributes))
     end
-
-    def all
+    
+    def count
+      all.count
+    end
+    
+    def all      
       @klass.find(criteria[:conditions])
+    end
+    
+    def find_by_key(key)
+      @klass.find_by_key(key)
     end
 
     def first
@@ -69,7 +77,9 @@ module NanoStore
     end
 
     def execute_belongs_to(instance)
-      Criteria.new(klass).where(foreign_key_for_class(instance.class) => instance.key)
+      a = Criteria.new(klass).find_by_key(instance.send(foreign_key_for_class(klass)))
+      puts "CRITERIA: #{self.inspect} || #{instance.inspect} | #{a.inspect}"      
+      a
     end
 
     private

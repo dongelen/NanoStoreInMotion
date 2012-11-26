@@ -151,6 +151,7 @@ describe NanoStore::Model do
       u.planes.create(:name => "Concorde", :age => 40)
       u.planes.all.count.should == 1
       u.planes.first.name.should == "Concorde"
+      u.planes.first.user.name.should == "Flo"
     end
 
     it "should delete in cascade" do

@@ -1,5 +1,14 @@
 module NanoStore
   module FinderMethods
+
+    def first
+      all.first
+    end
+
+    def last
+      all.last
+    end
+
     def all(*args)
       if args[0].is_a?(Hash)
         sort_options = args[0][:sort] || {}
