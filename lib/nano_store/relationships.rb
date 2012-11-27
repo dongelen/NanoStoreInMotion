@@ -17,15 +17,15 @@ module NanoStore
     def create_or_update(identifiers = {}, attributes = {})
       @klass.create_or_update(identifiers, @criteria[:conditions].merge(attributes))
     end
-    
+
     def count
       all.count
     end
-    
-    def all      
+
+    def all
       @klass.find(criteria[:conditions])
     end
-    
+
     def find_by_key(key)
       @klass.find_by_key(key)
     end
@@ -54,8 +54,18 @@ module NanoStore
       @options = options
       if type == :belongs_to
         foreign_key = foreign_key_for_class(klass)
+        method_name = "#{klass.to_s.downcase}=".to_sym
+        k = klass
         origin_klass.class_eval do
           attribute foreign_key
+          define_method method_name do |arg|
+            if arg.is_a?(k)
+              self.send("#{foreign_key}=".to_sym, arg.key)
+              self.save
+            else
+              raise "BAD RELATIONSHIP"
+            end
+          end
         end
       end
     end
@@ -77,9 +87,7 @@ module NanoStore
     end
 
     def execute_belongs_to(instance)
-      a = Criteria.new(klass).find_by_key(instance.send(foreign_key_for_class(klass)))
-      puts "CRITERIA: #{self.inspect} || #{instance.inspect} | #{a.inspect}"      
-      a
+      Criteria.new(klass).find_by_key(instance.send(foreign_key_for_class(klass)))
     end
 
     private

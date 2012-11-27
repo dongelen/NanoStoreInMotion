@@ -154,6 +154,19 @@ describe NanoStore::Model do
       u.planes.first.user.name.should == "Flo"
     end
 
+    it "should allow assigning belongs_to" do
+      u1 = User.create(:name => "Flo", :age => 25)
+      u1.planes.all.should == []
+      u2 = User.create(:name => "Pierre", :age => 35)
+      u2.planes.all.should == []
+      u1.planes.create(:name => "Concorde", :age => 40)
+      u1.planes.all.count.should == 1
+      u2.planes.all.count.should == 0
+      u1.planes.first.user = u2
+      u1.planes.all.count.should == 0
+      u2.planes.all.count.should == 1
+    end
+
     it "should delete in cascade" do
       u1 = User.create(:name => "Flo", :age => 25)
       Plane.create(:user_key => u1.key, :name => "Concorde", :age => 40)
