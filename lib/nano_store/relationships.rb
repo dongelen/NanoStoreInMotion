@@ -22,8 +22,12 @@ module NanoStore
       all.count
     end
 
-    def all
-      @klass.find(criteria[:conditions])
+    def all(*arg)
+      sort_options = {}
+      if arg[0]
+        sort_options = arg[0][:sort] || {}
+      end
+      @klass.find(criteria[:conditions], { :sort => sort_options })
     end
 
     def find_by_key(key)
