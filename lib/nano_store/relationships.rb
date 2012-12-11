@@ -15,7 +15,7 @@ module NanoStore
     end
 
     def create_or_update(identifiers = {}, attributes = {})
-      @klass.create_or_update(identifiers, @criteria[:conditions].merge(attributes))
+      @klass.create_or_update(@criteria[:conditions].merge(identifiers), @criteria[:conditions].merge(attributes))
     end
 
     def count
